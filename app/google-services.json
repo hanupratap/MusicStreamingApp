@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "54208864543",
+    "firebase_url": "https://directmusic-ce2d4.firebaseio.com",
+    "project_id": "directmusic-ce2d4",
+    "storage_bucket": "directmusic-ce2d4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:54208864543:android:bfa7ae408419e60496902a",
+        "android_client_info": {
+          "package_name": "com.example.musicstreamer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "54208864543-ovaesb599713p7mdcefd030sv2buif65.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.musicstreamer",
+            "certificate_hash": "c0fc8d558db43b2c130a9441dc819e9d227e9b37"
+          }
+        },
+        {
+          "client_id": "54208864543-n8lia2qos7g9clee16hsk24j49f79iv1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyApS94j9PLjTQEKSPo7gdpzclgIo283sTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "54208864543-n8lia2qos7g9clee16hsk24j49f79iv1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
