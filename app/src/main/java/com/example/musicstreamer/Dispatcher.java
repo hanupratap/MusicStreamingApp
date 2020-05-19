@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,6 +26,11 @@ public class Dispatcher extends Activity {
         super.onCreate(savedInstanceState);
         mAuth = FirebaseAuth.getInstance();
         setContentView(R.layout.login);
+
+
+        //Initializing Cache
+        App.proxyServer =  new HttpProxyCacheServer.Builder(this).maxCacheSize(1024 * 1024 * 1024).build();
+
 
         mAuth.signInAnonymously()
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {

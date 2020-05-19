@@ -27,6 +27,7 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -56,7 +57,7 @@ import io.paperdb.Paper;
 public class PlayerService extends Service {
 
 
-
+    Track track;
     private final IBinder mBinder = new LocalBinder();
     Context context;
     private SimpleExoPlayer player;
@@ -101,7 +102,7 @@ public class PlayerService extends Service {
 
             if(App.current_track != null)
             {
-                startPlayer(App.current_track);
+                startPlayer();
             }
 
 
@@ -133,10 +134,15 @@ public class PlayerService extends Service {
     }
 
 
-    public void startPlayer(final Track track)
+    public void startPlayer()
     {
 
 
+        track = App.current_track;
+
+
+
+        String proxyURL = App.proxyServer.getProxyUrl(track.url);
 
 
 
@@ -144,7 +150,7 @@ public class PlayerService extends Service {
                 Util.getUserAgent(context, context.getApplicationContext().getPackageName()));
 
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
-                .createMediaSource(Uri.parse(track.url));
+                .createMediaSource(Uri.parse(proxyURL));
 
         player.prepare(mediaSource);
         player.setPlayWhenReady(true);

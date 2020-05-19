@@ -37,6 +37,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     @Override
     public SearchAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
+
         View v = LayoutInflater.from(context).inflate(R.layout.track_lis_item, parent, false);
         ViewHolder viewHolder = new ViewHolder(v);
         return viewHolder;

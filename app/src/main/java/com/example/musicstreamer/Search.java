@@ -30,6 +30,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +39,12 @@ import java.util.List;
 
 public class Search extends Fragment {
 
-    SearchView searchView;
+//    SearchView searchView;
     String queryText;
     SearchAdapter searchAdapter;
     private AdView mAdView;
 
+    MaterialSearchBar searchView;
     List<Track> list = new ArrayList<>();
     CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("Tracks");
     Query query1;
@@ -63,20 +66,42 @@ public class Search extends Fragment {
 
 
 
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+        searchView.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                queryText = query;
-                func();
-                return false;
+            public void onSearchStateChanged(boolean enabled) {
+
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public void onSearchConfirmed(CharSequence text) {
 
-                return false;
+                queryText = text.toString();
+                queryText = queryText.substring(0,1).toUpperCase() + queryText.substring(1);
+                func();
+            }
+
+            @Override
+            public void onButtonClicked(int buttonCode) {
+
             }
         });
+
+
+//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+//            @Override
+//            public boolean onQueryTextSubmit(String query) {
+//                queryText = query;
+//                func();
+//                return false;
+//            }
+//
+//            @Override
+//            public boolean onQueryTextChange(String newText) {
+//
+//                return false;
+//            }
+//        });
 
 
         return view;
@@ -107,11 +132,7 @@ public class Search extends Fragment {
                     item.url = documentSnapshot.getString("url");
                     item.lyrics = documentSnapshot.getString("lyrics");
                     item.id = documentSnapshot.getId();
-                    Toast.makeText(getActivity(), item.name, Toast.LENGTH_SHORT).show();
-
                     list.add(item);
-
-                    Toast.makeText(getActivity(), documentSnapshot.getString("name"), Toast.LENGTH_SHORT).show();
 
                 }
 

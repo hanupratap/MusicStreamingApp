@@ -10,6 +10,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher1_round"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
@@ -32,7 +33,7 @@
 
         </activity>
         <activity android:name=".Dispatcher"
-            android:label="activity_dispatcher"
+            android:label="@string/app_name"
 
 
             >

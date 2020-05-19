@@ -72,12 +72,15 @@ public class Main extends AppCompatActivity  {
             PlayerService.LocalBinder binder = (PlayerService.LocalBinder) iBinder;
             mService = binder.getService();
             mBound = true;
+            bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
             initializePlayer();
         }
 
         @Override
         public void onServiceDisconnected(ComponentName componentName) {
             mBound = false;
+            bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
+
         }
     };
 
@@ -91,6 +94,7 @@ public class Main extends AppCompatActivity  {
         fragmentManager = getSupportFragmentManager();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+        bottomNavigationView = findViewById(R.id.nav);
 
 
 
@@ -117,8 +121,8 @@ public class Main extends AppCompatActivity  {
 
 
 
-        bottomNavigationView = findViewById(R.id.nav);
 
+        bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
 
         if(App.current_track == null)
         {

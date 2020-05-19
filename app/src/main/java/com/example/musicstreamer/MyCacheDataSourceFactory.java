@@ -20,7 +20,6 @@ class MyCacheDataSourceFactory implements DataSource.Factory {
     private final DefaultDataSourceFactory defaultDatasourceFactory;
     private final long maxFileSize, maxCacheSize;
 
-
     MyCacheDataSourceFactory(Context context, long maxCacheSize, long maxFileSize) {
         super();
         this.context = context;
@@ -41,5 +40,4 @@ class MyCacheDataSourceFactory implements DataSource.Factory {
                 new FileDataSource(), new CacheDataSink(simpleCache, maxFileSize),
                 CacheDataSource.FLAG_BLOCK_ON_CACHE | CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR, null);
     }
-
 }

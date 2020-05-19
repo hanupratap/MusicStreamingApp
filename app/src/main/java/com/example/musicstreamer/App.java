@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Build;
 
 
+import com.danikula.videocache.HttpProxyCacheServer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
@@ -24,6 +25,7 @@ public class App extends Application {
     public static PlayerControlView playerControlView;
     public static PlayerNotificationManager playerNotificationManager;
     public static Track current_track, prev_track;
+    public static HttpProxyCacheServer proxyServer;
 
 
 
