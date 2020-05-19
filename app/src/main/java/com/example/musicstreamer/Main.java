@@ -124,19 +124,7 @@ public class Main extends AppCompatActivity  {
             }
         });
 
-
-
-
-
-
         App.player = new SimpleExoPlayer.Builder(this).setTrackSelector(new DefaultTrackSelector(this)).build();
-
-
-
-
-
-
-
 
         bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
 
