@@ -115,14 +115,20 @@ public class Search extends Fragment {
 
                 }
 
-                FragmentTransaction transaction;
-                transaction = getActivity().getSupportFragmentManager().beginTransaction();
-                getActivity().getSupportFragmentManager().popBackStack(Player.class.toString(),0);
-                transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                if(list.size()>0)
+                {
+                    FragmentTransaction transaction;
+                    transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                    getActivity().getSupportFragmentManager().popBackStack(Player.class.toString(),0);
+                    transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                    transaction.add(R.id.main_fragment, new SearchResults(list), SearchResults.class.toString());
+                    transaction.addToBackStack(SearchResults.class.toString());
+                    transaction.commit();
+                }
+                else {
+                    Toast.makeText(getActivity(), "Not Available", Toast.LENGTH_SHORT).show();
+                }
 
-                transaction.add(R.id.main_fragment, new SearchResults(list), SearchResults.class.toString());
-                transaction.addToBackStack(SearchResults.class.toString());
-                transaction.commit();
 
 
             }
