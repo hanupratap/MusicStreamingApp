@@ -1,11 +1,8 @@
 package com.example.musicstreamer;
 
-import android.content.Intent;
-import android.gesture.GestureLibraries;
+
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -13,32 +10,29 @@ import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.Handler;
-import android.util.Log;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.AdapterView;
+
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.ListView;
+
 import android.widget.SearchView;
-import android.widget.Toast;
+
 
 import com.bumptech.glide.Glide;
-import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
-import com.google.android.exoplayer2.database.DatabaseProvider;
-import com.google.android.gms.tasks.OnCompleteListener;
+
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentReference;
+
 import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
+
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -46,25 +40,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import io.paperdb.Paper;
+
 
 
 public class TrackList extends Fragment {
 
-    PagedList.Config config;
+    private PagedList.Config config;
 
-    Random r = new Random();
-    ArrayAdapter<String> ad;
-    List<String> list = new ArrayList<>();
-    List<String> ids = new ArrayList<>();
-    List<String> urls = new ArrayList<>();
-    ImageView img;
-    RecyclerView rv;
-    String queryText = "";
-    MyAdapter adapter;
-    Query query;
-    Main main ;
-    SearchView searchView;
+    private Random r = new Random();
+    private ImageView img;
+    private RecyclerView rv;
+
+    private MyAdapter adapter;
+    private Query query;
+    private Main main ;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Tracks");
 
@@ -78,17 +67,21 @@ public class TrackList extends Fragment {
         main = (Main) getActivity();
 
 
-        main.selectedFragment = new TrackList();
+        if(main!=null)
+        {
+            main.selectedFragment = new TrackList();
+
+            config = new PagedList.Config.Builder()
+                    .setInitialLoadSizeHint(10)
+                    .setPageSize(7)
+                    .build();
+
+
+            setUpRecyclerView();
+        }
 
 
 
-        config = new PagedList.Config.Builder()
-                .setInitialLoadSizeHint(10)
-                .setPageSize(7)
-                .build();
-
-
-        setUpRecyclerView();
 
 
         return view;
@@ -98,17 +91,7 @@ public class TrackList extends Fragment {
 
     private void setUpRecyclerView()
     {
-        query = notebookRef.orderBy("name", Query.Direction.DESCENDING);
-//        query.addSnapshotListener(new EventListener<QuerySnapshot>() {
-//            @Override
-//            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
-//                for(DocumentSnapshot documentSnapshot:queryDocumentSnapshots)
-//                {
-//                    Toast.makeText(getActivity(), documentSnapshot.getString("name"), Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        });
-
+        query = notebookRef.orderBy("artist", Query.Direction.ASCENDING);
 
         FirestorePagingOptions<Track> options = new FirestorePagingOptions.Builder<Track>()
                 .setQuery(query, config ,Track.class)
@@ -133,8 +116,6 @@ public class TrackList extends Fragment {
                 item.lyrics = documentSnapshot.getString("lyrics");
                 item.id = documentSnapshot.getId();
 
-
-                Main main = (Main)getActivity();
                 Fragment fr = new Player();
                 main.selectedFragment = fr;
                 FragmentTransaction transaction;
