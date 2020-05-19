@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="10dp"
-    app:cardCornerRadius="5dp"
+    app:cardCornerRadius="15dp"
     android:theme="@style/ThemeOverlay.MaterialComponents.Dark"
     android:backgroundTint="@color/cardview_dark_background"
     android:elevation="0dp">
@@ -44,6 +44,7 @@
             android:text="Artist"
             android:paddingVertical="10dp"
             android:id="@+id/artist_name"
+            android:textAlignment="textEnd"
             android:textAppearance="@style/TextAppearance.AppCompat.Caption"
             android:textSize="15dp"
 

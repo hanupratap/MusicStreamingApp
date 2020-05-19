@@ -62,6 +62,7 @@ public class Main extends AppCompatActivity  {
 
     private long playbackPosition = 0;
 
+    FragmentTransaction transaction;
     Fragment selectedFragment = null;
 
 
@@ -86,13 +87,21 @@ public class Main extends AppCompatActivity  {
 
 
 
-    String currentFragName;
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        fragmentManager = getSupportFragmentManager();
+
         super.onCreate(savedInstanceState);
+
+
+
+        fragmentManager = getSupportFragmentManager();
+        transaction = fragmentManager.beginTransaction();
+
+        transaction.add(R.id.main_fragment,new TrackList(), TrackList.class.toString());
+        transaction.addToBackStack(TrackList.class.toString());
+        transaction.commit();
+
+
         setContentView(R.layout.activity_main2);
         bottomNavigationView = findViewById(R.id.nav);
 
@@ -111,6 +120,9 @@ public class Main extends AppCompatActivity  {
                 }
             }
         });
+
+
+
 
 
 
@@ -141,7 +153,6 @@ public class Main extends AppCompatActivity  {
 
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                FragmentTransaction transaction;
                 switch (item.getItemId()) {
                     case R.id.explore:
 
@@ -182,14 +193,24 @@ public class Main extends AppCompatActivity  {
                         {
 
                         }
+                        else if (selectedFragment.getClass().toString().equals(TrackList.class.toString()))
+                        {
+
+                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
+                            transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                            selectedFragment = new Search();
+                            transaction.replace(R.id.main_fragment, selectedFragment, Search.class.toString());
+
+
+                            transaction.commit();
+                        }
                         else {
                             selectedFragment = new Search();
                             getSupportFragmentManager().popBackStack(Player.class.toString(),0);
                             transaction = getSupportFragmentManager().beginTransaction();
                             transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
                             transaction.add(R.id.main_fragment, selectedFragment, Search.class.toString());
-
-
                             transaction.addToBackStack(Search.class.toString());
                             transaction.commit();
                         }

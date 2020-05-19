@@ -17,7 +17,7 @@
         android:layout_height="match_parent"
         android:id="@+id/main_fragment"
         android:layout_marginBottom="?attr/actionBarSize"
-        android:name="com.example.musicstreamer.TrackList"
+        android:name="com.example.musicstreamer.EmptyFragment"
         />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
