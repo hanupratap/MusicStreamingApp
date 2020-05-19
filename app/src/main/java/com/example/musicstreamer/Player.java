@@ -17,6 +17,7 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.widget.NestedScrollView;
@@ -71,47 +72,39 @@ public class Player extends Fragment {
 
     Toolbar toolbar;
     TextView tv;
-    SimpleExoPlayer player;
-    PlayerControlView playerControlView;
     private boolean playWhenReady = false;
     private int currentWindow = 0;
-    FloatingActionButton floatingActionButton;
-    private long playbackPosition = 0;
-    String url;
-    ImageView img;
 
+    private long playbackPosition = 0;
+    ImageView img;
+    FloatingActionButton floatingActionButton;
     Track item = new Track();
     TextView lyrics;
     DocumentReference dr;
     FirebaseFirestore db = FirebaseFirestore.getInstance();
     ImageView imageView;
     CollapsingToolbarLayout collapsingToolbarLayout;
-    private PlayerService mService;
-    private boolean mBound = false;
+
+
     private Intent intent;
 
+    private static Track prev_track;
+
+    Main main;
 
 
 
-    private ServiceConnection mConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-            PlayerService.LocalBinder binder = (PlayerService.LocalBinder) iBinder;
-            mService = binder.getService();
-            mBound = true;
-            initializePlayer();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName componentName) {
-            mBound = false;
-        }
-    };
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        item = Paper.book().read("current_track");
+
+        intent = new Intent(getActivity(), PlayerService.class);
+        Util.startForegroundService(getActivity(),intent);
+        main = (Main) getActivity();
+
+
+        main.bindService(intent, main.mConnection, Context.BIND_AUTO_CREATE);
 
     }
 
@@ -122,14 +115,24 @@ public class Player extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_player, container, false);
 
-        intent = new Intent(getActivity(), PlayerService.class);
-        Util.startForegroundService(getActivity(),intent);
-        getActivity().bindService(intent, mConnection, Context.BIND_AUTO_CREATE);
 
-        initializePlayer();
+
+        App.playerControlView = view.findViewById(R.id.player_control_view);
+
+        main = (Main) getActivity();
+
+
+        main.bottomNavigationView.getMenu().findItem(R.id.play).setChecked(true);
+        main.selectedFragment = new Player();
+
+        item = App.current_track;
+        prev_track = item;
+
+
 
 
         Paper.init(getActivity());
+
 
 
 
@@ -140,7 +143,7 @@ public class Player extends Fragment {
 
 
         tv = view.findViewById(R.id.track_title);
-        playerControlView = view.findViewById(R.id.player_control_view);
+
         lyrics = view.findViewById(R.id.lyrics);
 
         toolbar = view.findViewById(R.id.toolbar1);
@@ -148,15 +151,15 @@ public class Player extends Fragment {
         floatingActionButton = view.findViewById(R.id.fab_note);
         collapsingToolbarLayout.setTitleEnabled(false);
 
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
-        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                (getActivity()).onBackPressed();
-            }
-        });
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+//        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_black_24dp);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                (getActivity()).onBackPressed();
+//            }
+//        });
 
 
 
@@ -191,77 +194,70 @@ public class Player extends Fragment {
         new Thread(new Runnable() {
 
             public void run() {
-
-
-
-                final ArrayList<String> urls = new ArrayList<String>(); //to read each line
-                //TextView t; //to show the result, please declare and find it inside onCreate()
-
-
-                try {
-                    // Create a URL for the desired page
-                    URL url = new URL(item.lyrics); //My text file location
-                    //First open the connection
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setConnectTimeout(60000); // timing out in a minute
-
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-                    //t=(TextView)findViewById(R.id.TextView1); // ideally do this in onCreate()
-                    String str;
-                    while ((str = in.readLine()) != null) {
-                        urls.add(str);
-                    }
-                    in.close();
-                } catch (Exception e) {
-                    Log.d("MyTag", e.toString());
-                }
-
-                //since we are in background thread, to post results we have to go back to ui thread. do the following for that
-
-                try {
-                    getActivity().runOnUiThread(new Runnable() {
-                        public void run() {
-
-                            if(urls!=null){
-                                lyrics.setText("\n");
-                                for (int i = 0; i < urls.size(); i++) {
-                                    lyrics.append(urls.get(i) + '\n');
-                                }
-                            }
-
-                        }
-                    });
-                }
-                catch (Exception e)
-                {
-                    Log.d("TAG", e.toString());
-                }
-
-
-
-
+                loadLyrics();
             }
         }).start();
 
         Glide.with(getActivity()).load(item.artist).centerCrop().into(img);
 
 
-        if (Util.SDK_INT >= 24) {
-            initializePlayer();
-        }
-
-
         return view;
     }
 
-    private void initializePlayer() {
+    void loadLyrics()
+    {
+
+        final ArrayList<String> urls = new ArrayList<String>(); //to read each line
+        //TextView t; //to show the result, please declare and find it inside onCreate()
 
 
-        if (mBound) {
-            player = mService.getplayerInstance();
-            playerControlView.setPlayer(player);
+        try {
+            // Create a URL for the desired page
+            URL url = new URL(item.lyrics); //My text file location
+            //First open the connection
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setConnectTimeout(60000); // timing out in a minute
+
+            BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+            //t=(TextView)findViewById(R.id.TextView1); // ideally do this in onCreate()
+            String str;
+            while ((str = in.readLine()) != null) {
+                urls.add(str);
+            }
+            in.close();
+        } catch (Exception e) {
+            Log.d("MyTag", e.toString());
         }
+
+        //since we are in background thread, to post results we have to go back to ui thread. do the following for that
+
+        try {
+            getActivity().runOnUiThread(new Runnable() {
+                public void run() {
+
+                    if(urls!=null){
+                        lyrics.setText("\n");
+                        for (int i = 0; i < urls.size(); i++) {
+                            lyrics.append(urls.get(i) + '\n');
+                        }
+                    }
+
+                }
+            });
+        }
+        catch (Exception e)
+        {
+            Log.d("TAG", e.toString());
+        }
+
+
+
+    }
+
+
+    void initializePlayer() {
+        main.initializePlayer();
     }
 
 
@@ -269,36 +265,28 @@ public class Player extends Fragment {
     public void onStart() {
         Glide.with(getActivity()).load(item.artist_art).centerCrop().into(img);
         Glide.with(getActivity()).load(item.album_art).centerCrop().into(imageView);
+        if (Util.SDK_INT >= 24) {
+            initializePlayer();
+        }
         super.onStart();
-
-
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        hideSystemUi();
-        if ((Util.SDK_INT < 24 || player == null)) {
+
+        if ((Util.SDK_INT < 24 || App.player == null)) {
             initializePlayer();
         }
     }
 
-    @SuppressLint("InlinedApi")
-    private void hideSystemUi() {
-        playerControlView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-        );
-    }
+
 
     @Override
     public void onPause() {
         super.onPause();
-        if (Util.SDK_INT < 24) {
-            releasePlayer();
-        }
+
     }
 
     @Override
@@ -311,27 +299,29 @@ public class Player extends Fragment {
 
     @Override
     public void onDestroy() {
-        getActivity().unbindService(mConnection);
-        mService.stopSelf();
-        mBound = false;
-        if (Util.SDK_INT >= 24) {
-            releasePlayer();
-        }
+//        getActivity().unbindService(main.mConnection);
+//        main.mService.stopSelf();
+//        main.mBound = false;
+//        if (Util.SDK_INT >= 24) {
+//            releasePlayer();
+//        }
         super.onDestroy();
     }
 
-    private void releasePlayer() {
+//    private void releasePlayer() {
+//
+//
+//        if (main.player != null) {
+//
+//            playWhenReady = main.player.getPlayWhenReady();
+//            playbackPosition = main.player.getCurrentPosition();
+//            currentWindow = main.player.getCurrentWindowIndex();
+//            main.player.release();
+//            main.player = null;
+//        }
+//    }
 
 
-        if (player != null) {
-
-            playWhenReady = player.getPlayWhenReady();
-            playbackPosition = player.getCurrentPosition();
-            currentWindow = player.getCurrentWindowIndex();
-            player.release();
-            player = null;
-        }
-    }
 
 
 }

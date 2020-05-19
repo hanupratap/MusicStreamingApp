@@ -9,11 +9,23 @@
     tools:openDrawer="start"
     >
 
+
+
     <fragment
+
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/main_fragment"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:name="com.example.musicstreamer.TrackList"
         />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/nav"
+        app:menu="@menu/navigation_menu"
+      android:layout_gravity="bottom"
+        app:itemTextColor="@android:color/tab_indicator_text" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

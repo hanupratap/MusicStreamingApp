@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Player"
     android:id="@+id/player_layout"
-    android:fitsSystemWindows="true"
+    android:fitsSystemWindows="false"
     android:background="#454040"
 
     >
@@ -19,8 +19,7 @@
         android:fitsSystemWindows="true"
 
         >
-
-
+        
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="350dp"
@@ -76,8 +75,10 @@
         android:layout_margin="@dimen/fab_margin"
         android:backgroundTint="#0C1B45"
         android:src="@drawable/ic_lyrics"
-        android:layout_gravity="bottom|end"
+        app:layout_anchor="@id/album_img_card"
+        app:layout_anchorGravity="bottom|start"
         android:elevation="5dp"
+
         android:tooltipText="Show Lyrics"
 
         />
@@ -135,42 +136,41 @@
                             android:backgroundTint="@color/design_default_color_primary"
 
                             />
+
                         <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:padding="10dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
                             android:gravity="bottom"
-                        >
+                            android:padding="10dp">
 
 
                             <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                                >
-
-                            <TextView
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:text="Track Name"
-                                android:textSize="30dp"
-                                android:padding="10dp"
+                                android:orientation="vertical">
 
-                                android:textAppearance="@style/TextAppearance.AppCompat.Widget.PopupMenu.Header"
-                                android:id="@+id/track_title"
-                                />
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAlignment="textEnd"
-                                android:text="Album Art"
-                                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                                android:textSize="20dp"
-                                android:padding="10dp"
+                                <TextView
+                                    android:id="@+id/track_title"
+
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:text="Track Name"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.PopupMenu.Header"
+                                    android:textSize="30dp" />
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:padding="10dp"
+                                    android:text="Album Art"
+                                    android:textAlignment="textEnd"
+                                    android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+                                    android:textSize="20dp"
 
 
-                                />
-                        </LinearLayout>
+                                    />
+                            </LinearLayout>
 
                         </RelativeLayout>
                     </androidx.cardview.widget.CardView>
@@ -186,12 +186,14 @@
                     android:layout_margin="10dp"
                     app:cardCornerRadius="10dp"
 
+
                    >
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:orientation="vertical"
                         android:padding="10dp"
+
                         >
 
                         <TextView
@@ -201,6 +203,7 @@
                             android:textAppearance="@style/TextAppearance.AppCompat.Widget.PopupMenu.Header"
                             android:textSize="30dp"
 
+
                             />
 
 
@@ -208,6 +211,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:id="@+id/lyrics"
+
                             android:textSize="15dp"
                             android:text="Loading Lyrics..."
                             android:textAppearance="@style/TextAppearance.MaterialComponents.Caption"

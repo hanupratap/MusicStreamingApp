@@ -10,11 +10,15 @@ import android.content.ServiceConnection;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.session.MediaSession;
 import android.net.Uri;
 import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.support.v4.media.MediaDescriptionCompat;
+import android.support.v4.media.session.MediaSessionCompat;
+import android.widget.Switch;
 
 
 import androidx.annotation.NonNull;
@@ -26,15 +30,21 @@ import com.bumptech.glide.request.transition.Transition;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.extractor.ExtractorsFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.DownloadNotificationUtil;
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
+import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
@@ -50,9 +60,6 @@ public class PlayerService extends Service {
     private final IBinder mBinder = new LocalBinder();
     Context context;
     private SimpleExoPlayer player;
-    Track track;
-    private PlayerNotificationManager playerNotificationManager;
-
 
     @Nullable
     @Override
@@ -65,35 +72,48 @@ public class PlayerService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        track = Paper.book().read("current_track");
+        Paper.init(context);
+
+        player = App.player;
 
 
-
-        if(playerNotificationManager!=null)
+        if(App.prev_track == App.current_track)
         {
 
-            playerNotificationManager.setPlayer(null);
-            player.release();
-            player = null;
+        }
+        else
+        {
+            if(App.playerNotificationManager!=null)
+            {
+
+                App.playerNotificationManager.setPlayer(null);
+                if(player!=null)
+                {
+                    player.release();
+                    player = null;
+                }
+
+
+            }
+
+
+            startPlayer(App.current_track);
+
+            App.prev_track = App.current_track;
+
         }
 
-        if(track!=null)
-        {
-            startPlayer();
-        }
         return Service.START_STICKY;
+
+
     }
 
     @Override
     public void onDestroy() {
-
-        playerNotificationManager.setPlayer(null);
+        App.playerNotificationManager.setPlayer(null);
         player.release();
         player = null;
-
-
         super.onDestroy();
-
     }
 
 
@@ -103,26 +123,28 @@ public class PlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         context = this;
-
+        player = new SimpleExoPlayer.Builder(this).build();
     }
 
 
-    public void startPlayer()
+    public void startPlayer(final Track track)
     {
 
-        player = ExoPlayerFactory.newSimpleInstance(context, new DefaultTrackSelector());
-        DefaultDataSourceFactory dataSourceFactory = new DefaultDataSourceFactory(context,
-                Util.getUserAgent(context, "AudioMode")
-        );
+
+
+
+
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(context,
+                Util.getUserAgent(context, context.getApplicationContext().getPackageName()));
+
         MediaSource mediaSource = new ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(Uri.parse(track.url));
-
-
 
         player.prepare(mediaSource);
         player.setPlayWhenReady(true);
 
-        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
+
+        App.playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
                 context,
                 App.CHANNEL_ID,
                 R.string.app_name,
@@ -138,11 +160,9 @@ public class PlayerService extends Service {
                     @Override
                     public PendingIntent createCurrentContentIntent(Player player) {
 
-                        Intent intent = new Intent(context, getApplication().getClass());
+                        Intent intent = new Intent(context, Main.class);
 
                         return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
                     }
 
                     @Nullable
@@ -180,7 +200,7 @@ public class PlayerService extends Service {
 
 
 
-        playerNotificationManager.setNotificationListener(
+        App.playerNotificationManager.setNotificationListener(
                 new PlayerNotificationManager.NotificationListener() {
 
                     @Override
@@ -192,14 +212,17 @@ public class PlayerService extends Service {
                     @Override
                     public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
                         stopSelf();
-
                     }
                 }
         );
 
 
 
-        playerNotificationManager.setPlayer(player);
+        App.playerNotificationManager.setPlayer(player);
+
+
+
+
     }
 
 

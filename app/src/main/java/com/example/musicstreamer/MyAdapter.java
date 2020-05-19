@@ -45,8 +45,6 @@ public class MyAdapter extends FirestorePagingAdapter<Track,MyAdapter.ViewHolder
     protected void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull final Track model) {
         holder.tv.setText(model.name);
         holder.tv1.setText(model.artist);
-
-
     }
 
     @NonNull
