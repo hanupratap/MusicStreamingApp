@@ -60,6 +60,7 @@ public class PlayerService extends Service {
     private final IBinder mBinder = new LocalBinder();
     Context context;
     private SimpleExoPlayer player;
+    private PlayerNotificationManager playerNotificationManager;
 
     @Nullable
     @Override
@@ -76,6 +77,7 @@ public class PlayerService extends Service {
 
         player = App.player;
 
+        playerNotificationManager = App.playerNotificationManager;
 
         if(App.prev_track == App.current_track)
         {
@@ -83,10 +85,10 @@ public class PlayerService extends Service {
         }
         else
         {
-            if(App.playerNotificationManager!=null)
+            if(playerNotificationManager!=null)
             {
 
-                App.playerNotificationManager.setPlayer(null);
+                playerNotificationManager.setPlayer(null);
                 if(player!=null)
                 {
                     player.release();
@@ -97,7 +99,11 @@ public class PlayerService extends Service {
             }
 
 
-            startPlayer(App.current_track);
+            if(App.current_track != null)
+            {
+                startPlayer(App.current_track);
+            }
+
 
             App.prev_track = App.current_track;
 
@@ -110,7 +116,7 @@ public class PlayerService extends Service {
 
     @Override
     public void onDestroy() {
-        App.playerNotificationManager.setPlayer(null);
+        playerNotificationManager.setPlayer(null);
         player.release();
         player = null;
         super.onDestroy();
@@ -144,7 +150,7 @@ public class PlayerService extends Service {
         player.setPlayWhenReady(true);
 
 
-        App.playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
+        playerNotificationManager = PlayerNotificationManager.createWithNotificationChannel(
                 context,
                 App.CHANNEL_ID,
                 R.string.app_name,
@@ -200,7 +206,7 @@ public class PlayerService extends Service {
 
 
 
-        App.playerNotificationManager.setNotificationListener(
+        playerNotificationManager.setNotificationListener(
                 new PlayerNotificationManager.NotificationListener() {
 
                     @Override
@@ -218,7 +224,7 @@ public class PlayerService extends Service {
 
 
 
-        App.playerNotificationManager.setPlayer(player);
+        playerNotificationManager.setPlayer(player);
 
 
 

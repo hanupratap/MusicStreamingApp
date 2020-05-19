@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.paging.PagedList;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -136,16 +137,21 @@ public class TrackList extends Fragment {
                 Main main = (Main)getActivity();
                 Fragment fr = new Player();
                 main.selectedFragment = fr;
-                if(App.current_track!=null)
+                FragmentTransaction transaction;
+                transaction = main.getSupportFragmentManager().beginTransaction();
+
+                if(App.current_track.id!=null)
                 {
                     if(App.current_track.id.equals(item.id))
                     {
                         getParentFragmentManager().popBackStack(Player.class.toString(), 0);
+                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
                     }
                     else
                     {
                         App.current_track = item;
                         getParentFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
                         getParentFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
                     }
                 }
@@ -153,7 +159,10 @@ public class TrackList extends Fragment {
                 {
                     App.current_track = item;
 
+
+                    transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
                     getParentFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+
                 }
 
 

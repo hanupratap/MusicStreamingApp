@@ -11,6 +11,11 @@
         android:roundIcon="@mipmap/ic_launcher1_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.gms.ads.APPLICATION_ID"
+            android:value="ca-app-pub-8754263293343771~1832040666"/>
+
+
         <service
             android:name=".PlayerService"
             android:enabled="true"

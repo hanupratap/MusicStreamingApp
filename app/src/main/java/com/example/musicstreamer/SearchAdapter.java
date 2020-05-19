@@ -12,7 +12,9 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -42,7 +44,7 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final SearchAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final SearchAdapter.ViewHolder holder, final int position) {
         holder.tv.setText( trackList.get(position).name);
         holder.tv1.setText( trackList.get(position).artist);
 
@@ -51,12 +53,45 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             public void onClick(View v) {
                 Track item = new Track();
 
+                item = trackList.get(position);
 
-                Paper.init(context);
-                Paper.book().write("current_track", item);
                 FragmentManager manager = ((AppCompatActivity)context).getSupportFragmentManager();
 
-                manager.beginTransaction().replace(R.id.main_fragment, new Player()).commit();
+                Main main = (Main)context;
+                Fragment fr = new Player();
+                main.selectedFragment = fr;
+                FragmentTransaction transaction;
+                transaction = main.getSupportFragmentManager().beginTransaction();
+                if(App.current_track.id!=null)
+                {
+
+                    if(App.current_track.id.equals(item.id))
+                    {
+                        main.getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
+                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+
+                    }
+                    else
+                    {
+                        App.current_track = item;
+                        main.getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                        main.getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                    }
+                }
+                else
+                {
+                    App.current_track = item;
+                    main.getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    main.getSupportFragmentManager().popBackStackImmediate();
+                    transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                    main.getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                }
+
+
+                main.bottomNavigationView.getMenu().findItem(R.id.play).setChecked(true);
+
+
 
             }
         });

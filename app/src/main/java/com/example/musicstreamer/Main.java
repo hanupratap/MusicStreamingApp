@@ -83,6 +83,8 @@ public class Main extends AppCompatActivity  {
 
 
 
+    String currentFragName;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,6 +92,21 @@ public class Main extends AppCompatActivity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+
+
+        selectedFragment = new TrackList();
+
+        fragmentManager.addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                Fragment fr = fragmentManager.findFragmentById(R.id.main_fragment);
+                if(fr!=null){
+                    Log.e("fragment=", fr.getClass().getSimpleName());
+                    selectedFragment = fr;
+
+                }
+            }
+        });
 
 
 
@@ -117,24 +134,36 @@ public class Main extends AppCompatActivity  {
            bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
        }
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            Fragment selectedFragment = null;
 
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 FragmentTransaction transaction;
                 switch (item.getItemId()) {
                     case R.id.explore:
-                        selectedFragment = new TrackList();
-                        getSupportFragmentManager().popBackStack(Player.class.toString(),0);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
-                        transaction.addToBackStack(TrackList.class.toString());
-                        transaction.commit();
+
+                        if(selectedFragment.getClass().toString().equals(TrackList.class.toString()))
+                        {
+
+                        }
+                        else {
+                            selectedFragment = new TrackList();
+                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
+                            transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+
+                            transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
+                            transaction.addToBackStack(TrackList.class.toString());
+                            transaction.commit();
+                        }
+
+
+
                         return true;
 
                     case R.id.play:
 
                         selectedFragment = new Player();
+
 
                         getSupportFragmentManager().popBackStack(Player.class.toString(),0);
 
@@ -144,12 +173,26 @@ public class Main extends AppCompatActivity  {
 
                     case R.id.search:
 
-                        selectedFragment = new Search();
-                        getSupportFragmentManager().popBackStack(Player.class.toString(),0);
-                        transaction = getSupportFragmentManager().beginTransaction();
-                        transaction.add(R.id.main_fragment, selectedFragment, Search.class.toString());
-                        transaction.addToBackStack(Search.class.toString());
-                        transaction.commit();
+
+                        if(selectedFragment.getClass().toString().equals(Search.class.toString()))
+                        {
+
+                        }
+                        else {
+                            selectedFragment = new Search();
+                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
+                            transaction = getSupportFragmentManager().beginTransaction();
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                            transaction.add(R.id.main_fragment, selectedFragment, Search.class.toString());
+
+
+                            transaction.addToBackStack(Search.class.toString());
+                            transaction.commit();
+                        }
+
+
+
+
                         return true;
 
                 }
@@ -240,7 +283,7 @@ public class Main extends AppCompatActivity  {
             releasePlayer();
         }
     }
-    private void releasePlayer() {
+    protected void releasePlayer() {
 
 
         if (App.player != null) {
