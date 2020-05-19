@@ -31,7 +31,6 @@
                 android:id="@+id/image_cover_app"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:contentDescription="Sample Image"
                 android:scaleType="centerCrop"
                 android:src="@drawable/scott_webb"
                 android:fitsSystemWindows="true"
