@@ -128,25 +128,33 @@ public class Main extends AppCompatActivity  {
 
         bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
 
-        if(App.current_track.id == null)
-        {
-            Paper.init(this);
-            App.current_track = Paper.book().read("current_track");
 
-            if(App.current_track.id != null)
+        if(App.firstStart == false)
+        {
+            if(App.current_track.id == null)
             {
-                bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
+                Paper.init(this);
+                App.current_track = Paper.book().read("current_track");
+
+                if(App.current_track.id != null)
+                {
+                    bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
+                }
+                else
+                {
+                    bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
+                }
+
             }
             else
             {
-                bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
+                bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
             }
 
         }
-        else
-        {
-            bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
-        }
+
+
+
 
 
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -172,16 +180,16 @@ public class Main extends AppCompatActivity  {
 
                     case R.id.play:
 
-                        selectedFragment = new Player();
 
-                        Fragment temp_frag = getSupportFragmentManager().findFragmentByTag(selectedFragment.getClass().toString());
+
+                        Fragment temp_frag = getSupportFragmentManager().findFragmentByTag(Player.class.toString());
+                        selectedFragment = new Player();
                         if(temp_frag == null)
                         {
-                            selectedFragment = new Player();
                             transaction = getSupportFragmentManager().beginTransaction();
-                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
-                            transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
-                            transaction.addToBackStack(TrackList.class.toString());
+                            getSupportFragmentManager().popBackStack(Player.class.toString(),FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            transaction.add(R.id.main_fragment, selectedFragment, Player.class.toString());
+                            transaction.addToBackStack(Player.class.toString());
                             transaction.commit();
                         }
                         else
@@ -285,6 +293,21 @@ public class Main extends AppCompatActivity  {
 
     }
 
+    @Override
+    protected void onStop() {
+        Paper.book().write("current_track", App.current_track);
+        if(mBound)
+        {
+            this.unbindService(mConnection);
+            mService.stopSelf();
+        }
+
+        mBound = false;
+
+        releasePlayer();
+        super.onStop();
+
+    }
 
     @Override
     protected void onDestroy() {

@@ -26,7 +26,7 @@ public class App extends Application {
     public static PlayerNotificationManager playerNotificationManager;
     public static Track current_track, prev_track;
     public static HttpProxyCacheServer proxyServer;
-
+    public static Boolean firstStart = true;
 
 
 

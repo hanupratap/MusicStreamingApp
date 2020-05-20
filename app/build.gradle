@@ -69,6 +69,7 @@ dependencies {
     //exoplayer
     implementation 'com.google.android.exoplayer:exoplayer-core:2.11.4'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.4'
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.4'
 
     implementation 'com.vincan:medialoader:1.0.0'
 
@@ -79,6 +80,8 @@ dependencies {
     //AdMob
     implementation 'com.google.android.gms:play-services-ads:19.1.0'
 
+    //Fav Button
+    implementation 'com.github.varunest:sparkbutton:1.0.6'
 
     implementation 'com.danikula:videocache:2.7.1'
 

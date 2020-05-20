@@ -3,22 +3,17 @@ package com.example.musicstreamer;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
+
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import android.graphics.drawable.Drawable;
-import android.media.session.MediaSession;
+
 import android.net.Uri;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.Parcelable;
-import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.media.session.MediaSessionCompat;
-import android.widget.Switch;
 
 
 import androidx.annotation.NonNull;
@@ -27,28 +22,19 @@ import androidx.annotation.Nullable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.danikula.videocache.HttpProxyCacheServer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
+
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
+
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.ProgressiveMediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.DownloadNotificationUtil;
+
 import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
+
 import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource;
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory;
+
 import com.google.android.exoplayer2.util.Util;
 
 
@@ -62,6 +48,7 @@ public class PlayerService extends Service {
     Context context;
     private SimpleExoPlayer player;
     private PlayerNotificationManager playerNotificationManager;
+
 
     @Nullable
     @Override
@@ -117,8 +104,14 @@ public class PlayerService extends Service {
 
     @Override
     public void onDestroy() {
-        playerNotificationManager.setPlayer(null);
-        player.release();
+        if (playerNotificationManager != null) {
+            playerNotificationManager.setPlayer(null);
+        }
+        if (player != null)
+        {
+            player.release();
+
+        }
         player = null;
         super.onDestroy();
     }
@@ -228,6 +221,8 @@ public class PlayerService extends Service {
                     }
                 }
         );
+
+        playerNotificationManager.setUseStopAction(true);
 
 
 

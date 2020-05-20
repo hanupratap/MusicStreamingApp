@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -58,17 +59,13 @@ public class MyAdapter extends FirestorePagingAdapter<Track,MyAdapter.ViewHolder
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView tv;
         TextView tv1;
+        ImageView imageView;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tv = itemView.findViewById(R.id.track_string);
             tv1 = itemView.findViewById(R.id.artist_name);
-            tv1.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    tv.performClick();
-                }
-            });
-            tv.setOnClickListener(new View.OnClickListener() {
+            imageView = itemView.findViewById(R.id.item_play_button);
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     int position = getAdapterPosition();
@@ -76,9 +73,9 @@ public class MyAdapter extends FirestorePagingAdapter<Track,MyAdapter.ViewHolder
                     {
                         listener.OnItemClick( getItem(position), position);
                     }
-
                 }
             });
+
         }
 
 

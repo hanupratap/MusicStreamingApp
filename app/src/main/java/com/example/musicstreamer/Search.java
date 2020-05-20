@@ -128,18 +128,17 @@ public class Search extends Fragment {
                     transaction.commit();
                 }
                 else {
-                    temp--;
-                    Query query = notebookRef.orderBy("artist").startAt(queryText)
-                            .endAt(queryText + "\uf8ff");
-                    func(query);
                     if(temp == -2)
                     {
                         Toast.makeText(getActivity(), "Not Available", Toast.LENGTH_SHORT).show();
-
+                        temp = 0;
                     }
                     else
                     {
-
+                        temp--;
+                        Query query = notebookRef.orderBy("artist").startAt(queryText)
+                                .endAt(queryText + "\uf8ff");
+                        func(query);
                     }
                 }
 

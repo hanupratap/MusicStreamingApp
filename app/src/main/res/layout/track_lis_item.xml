@@ -20,6 +20,7 @@
             android:layout_height="match_parent"
             android:src="@drawable/ic_play_arrow_black_24dp"
             android:padding="10dp"
+            android:id="@+id/item_play_button"
             />
 
     <LinearLayout

@@ -110,6 +110,7 @@ public class TrackList extends Fragment {
             public void OnItemClick(DocumentSnapshot documentSnapshot, int position) {
 
 
+
                 Track item = new Track();
 
                 item.name = documentSnapshot.getString("name");
@@ -125,30 +126,44 @@ public class TrackList extends Fragment {
                 FragmentTransaction transaction;
                 transaction = main.getSupportFragmentManager().beginTransaction();
 
-                if(App.current_track.id!=null)
-                {
-                    if(App.current_track.id.equals(item.id))
-                    {
-                        getParentFragmentManager().popBackStack(Player.class.toString(), 0);
-                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-                    }
-                    else
-                    {
-                        App.current_track = item;
-                        getParentFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-                        getParentFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
-                    }
-                }
-                else
+                if(App.firstStart == true)
                 {
                     App.current_track = item;
 
 
                     transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
                     getParentFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
-
                 }
+                else
+                {
+                    if(App.current_track.id!=null)
+                    {
+                        if(App.current_track.id.equals(item.id))
+                        {
+                            getParentFragmentManager().popBackStack(Player.class.toString(), 0);
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                        }
+                        else
+                        {
+                            App.current_track = item;
+                            getParentFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                            getParentFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                        }
+                    }
+                    else
+                    {
+                        App.current_track = item;
+
+
+                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
+                        getParentFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+
+                    }
+                }
+
+
+                App.firstStart = false;
 
 
                 main.bottomNavigationView.getMenu().findItem(R.id.play).setChecked(true);
