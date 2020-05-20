@@ -128,19 +128,27 @@ public class Main extends AppCompatActivity  {
 
         bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
 
-        if(App.current_track == null)
+        if(App.current_track.id == null)
         {
-            bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
+            Paper.init(this);
+            App.current_track = Paper.book().read("current_track");
+
+            if(App.current_track.id != null)
+            {
+                bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
+            }
+            else
+            {
+                bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
+            }
+
+        }
+        else
+        {
+            bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
         }
 
 
-        Paper.init(this);
-       final Track track = Paper.book().read("current_track");
-
-       if(track == null)
-       {
-           bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(true);
-       }
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
 
             @Override
@@ -166,8 +174,21 @@ public class Main extends AppCompatActivity  {
 
                         selectedFragment = new Player();
 
+                        Fragment temp_frag = getSupportFragmentManager().findFragmentByTag(selectedFragment.getClass().toString());
+                        if(temp_frag == null)
+                        {
+                            selectedFragment = new Player();
+                            transaction = getSupportFragmentManager().beginTransaction();
+                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
+                            transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
+                            transaction.addToBackStack(TrackList.class.toString());
+                            transaction.commit();
+                        }
+                        else
+                        {
+                            getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
 
-                        getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
+                        }
 
                         return true;
 
@@ -267,6 +288,8 @@ public class Main extends AppCompatActivity  {
 
     @Override
     protected void onDestroy() {
+
+        Paper.book().write("current_track", App.current_track);
         if(mBound)
         {
             this.unbindService(mConnection);
@@ -294,7 +317,7 @@ public class Main extends AppCompatActivity  {
     @Override
     protected void onPause() {
         super.onPause();
-            releasePlayer();
+//            releasePlayer();
 
     }
     protected void releasePlayer() {

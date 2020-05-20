@@ -73,7 +73,7 @@ public class TrackList extends Fragment {
 
             config = new PagedList.Config.Builder()
                     .setInitialLoadSizeHint(10)
-                    .setPageSize(7)
+                    .setPageSize(5)
                     .build();
 
 
@@ -100,6 +100,10 @@ public class TrackList extends Fragment {
         rv.setLayoutManager(new LinearLayoutManager(getActivity()));
         rv.setAdapter(adapter);
         rv.setHasFixedSize(true);
+        rv.setItemViewCacheSize(20);
+        rv.setDrawingCacheEnabled(true);
+        rv.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+
 
         adapter.setOnItemClickListener(new MyAdapter.OnItemClickListener() {
             @Override

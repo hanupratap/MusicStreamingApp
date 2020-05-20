@@ -223,6 +223,7 @@ public class PlayerService extends Service {
 
                     @Override
                     public void onNotificationCancelled(int notificationId, boolean dismissedByUser) {
+
                         stopSelf();
                     }
                 }

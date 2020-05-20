@@ -43,7 +43,7 @@ public class Search extends Fragment {
     String queryText;
     SearchAdapter searchAdapter;
     private AdView mAdView;
-
+    int temp = 0;
     MaterialSearchBar searchView;
     List<Track> list = new ArrayList<>();
     CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("Tracks");
@@ -78,7 +78,9 @@ public class Search extends Fragment {
 
                 queryText = text.toString();
                 queryText = queryText.substring(0,1).toUpperCase() + queryText.substring(1);
-                func();
+                Query query = notebookRef.orderBy("name").startAt(queryText)
+                        .endAt(queryText + "\uf8ff");
+                func(query);
             }
 
             @Override
@@ -87,33 +89,12 @@ public class Search extends Fragment {
             }
         });
 
-
-//        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//            @Override
-//            public boolean onQueryTextSubmit(String query) {
-//                queryText = query;
-//                func();
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String newText) {
-//
-//                return false;
-//            }
-//        });
-
-
         return view;
     }
 
 
 
-    private void func() {
-        Query query = notebookRef.orderBy("name").startAt(queryText)
-                .endAt(queryText + "\uf8ff");
-
-
+    private void func(Query query) {
 
         query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
@@ -147,7 +128,19 @@ public class Search extends Fragment {
                     transaction.commit();
                 }
                 else {
-                    Toast.makeText(getActivity(), "Not Available", Toast.LENGTH_SHORT).show();
+                    temp--;
+                    Query query = notebookRef.orderBy("artist").startAt(queryText)
+                            .endAt(queryText + "\uf8ff");
+                    func(query);
+                    if(temp == -2)
+                    {
+                        Toast.makeText(getActivity(), "Not Available", Toast.LENGTH_SHORT).show();
+
+                    }
+                    else
+                    {
+
+                    }
                 }
 
 

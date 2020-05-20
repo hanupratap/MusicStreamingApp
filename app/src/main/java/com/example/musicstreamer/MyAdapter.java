@@ -51,6 +51,7 @@ public class MyAdapter extends FirestorePagingAdapter<Track,MyAdapter.ViewHolder
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.track_lis_item, parent, false);
+
         return new ViewHolder(v);
     }
 
