@@ -85,5 +85,8 @@ dependencies {
 
     implementation 'com.danikula:videocache:2.7.1'
 
+    //LottieAnimation
+    implementation 'com.airbnb.android:lottie:3.4.0'
+
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
 }

@@ -63,31 +63,44 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 main.selectedFragment = fr;
                 FragmentTransaction transaction;
                 transaction = main.getSupportFragmentManager().beginTransaction();
-                if(App.current_track.id!=null)
+                if(App.firstStart == true)
                 {
+                    App.current_track = item;
 
-                    if(App.current_track.id.equals(item.id))
+
+                    transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
+                    ((Main) context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                }
+                else
+                {
+                    if(App.current_track.id!=null)
                     {
-                        main.getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
-                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-
+                        if(App.current_track.id.equals(item.id))
+                        {
+                            ((Main) context).getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                        }
+                        else
+                        {
+                            App.current_track = item;
+                            ((Main) context).getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+                            ((Main) context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                        }
                     }
                     else
                     {
                         App.current_track = item;
-                        main.getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-                        main.getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+
+
+                        transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
+                        ((Main) context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+
                     }
                 }
-                else
-                {
-                    App.current_track = item;
-                    main.getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
-                    main.getSupportFragmentManager().popBackStackImmediate();
-                    transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-                    main.getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
-                }
+
+
+                App.firstStart = false;
 
 
                 main.bottomNavigationView.getMenu().findItem(R.id.play).setChecked(true);

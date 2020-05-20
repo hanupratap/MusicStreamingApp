@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 
 
 public class Dispatcher extends Activity {
@@ -40,7 +42,12 @@ public class Dispatcher extends Activity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d("Main", "signInAnonymously:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            startActivity(new Intent(Dispatcher.this, Main.class));
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    startActivity(new Intent(Dispatcher.this, Main.class));
+                                }
+                            }, 2500);
 
                         } else {
                             // If sign in fails, display a message to the user.
@@ -54,6 +61,7 @@ public class Dispatcher extends Activity {
                 });
 
 
+
     }
 
     @Override
@@ -62,8 +70,12 @@ public class Dispatcher extends Activity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if(currentUser!=null)
         {
-            startActivity(new Intent(Dispatcher.this, Main.class));
-
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startActivity(new Intent(Dispatcher.this, Main.class));
+                }
+            }, 2200);
         }
     }
 
