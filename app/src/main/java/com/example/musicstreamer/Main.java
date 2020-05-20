@@ -300,25 +300,6 @@ public class Main extends AppCompatActivity  {
 
     }
 
-    @Override
-    protected void onStop() {
-        if(App.current_track!=null)
-        {
-            Paper.book().write("current_track", App.current_track);
-
-        }
-        if(mBound)
-        {
-            this.unbindService(mConnection);
-            mService.stopSelf();
-        }
-
-        mBound = false;
-
-        releasePlayer();
-        super.onStop();
-
-    }
 
     @Override
     protected void onDestroy() {
