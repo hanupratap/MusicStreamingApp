@@ -1,9 +1,21 @@
 package com.example.musicstreamer;
 
 
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,7 +24,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -20,15 +36,26 @@ import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
+import android.widget.PopupMenu;
 import android.widget.SearchView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.bumptech.glide.Glide;
 
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -42,10 +69,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-
+import javax.microedition.khronos.opengles.GL;
 
 
 public class TrackList extends Fragment {
+
 
     private PagedList.Config config;
 
@@ -53,11 +81,22 @@ public class TrackList extends Fragment {
     private ImageView img;
     private RecyclerView rv;
 
+
     private MyAdapter adapter;
     private Query query;
     private Main main ;
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Tracks");
+
+    FirebaseUser user;
+
+    ExtendedFloatingActionButton floatingActionButton;
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -66,8 +105,41 @@ public class TrackList extends Fragment {
         View view =  inflater.inflate(R.layout.fragment_track_list, container, false);
         rv = view.findViewById(R.id.track_list);
         img = view.findViewById(R.id.image_cover_app);
+        floatingActionButton = view.findViewById(R.id.fab_note_main);
+
+
         main = (Main) getActivity();
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
+//        if(!user.isAnonymous())
+//        {
+//
+//
+//            Drawable drawable = Glide.with(this)
+//                    .asBitmap()
+//                    .load(user.getPhotoUrl())
+//                    .into(new CustomTarget<Bitmap>() {
+//                        @Override
+//                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                            floatingActionButton.setbac;
+//                        }
+//
+//                        @Override
+//                        public void onLoadCleared(@Nullable Drawable placeholder) {
+//                        }
+//                    });
+//        }
+
+
+
+        floatingActionButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(main, "Signing Out", Toast.LENGTH_SHORT).show();
+               signOut();
+            }
+        });
 
 
 
@@ -87,11 +159,24 @@ public class TrackList extends Fragment {
 
 
 
-
-
         return view;
     }
 
+    public void signOut()
+    {
+        FirebaseAuth.getInstance().signOut();
+        restartApp();
+    }
+
+
+
+    private void restartApp() {
+
+        Intent intent = new Intent(getActivity(), Dispatcher.class);
+        intent .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
 
 
     private void setUpRecyclerView()

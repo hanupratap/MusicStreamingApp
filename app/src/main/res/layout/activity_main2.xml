@@ -26,6 +26,6 @@
         android:id="@+id/nav"
         app:menu="@menu/navigation_menu"
       android:layout_gravity="bottom"
-        app:itemTextColor="@android:color/tab_indicator_text" />
+        app:itemTextColor="@android:color/holo_red_light" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

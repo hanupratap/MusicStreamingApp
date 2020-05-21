@@ -194,6 +194,11 @@ public class Dispatcher extends Activity {
     }
 
     @Override
+    public void onBackPressed() {
+        finishAffinity();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 

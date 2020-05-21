@@ -63,13 +63,14 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                 main.selectedFragment = fr;
                 FragmentTransaction transaction;
                 transaction = main.getSupportFragmentManager().beginTransaction();
+
                 if(App.firstStart == true)
                 {
                     App.current_track = item;
 
 
                     transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
-                    ((Main) context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                    ((Main)context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
                 }
                 else
                 {
@@ -77,15 +78,30 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
                     {
                         if(App.current_track.id.equals(item.id))
                         {
-                            ((Main) context).getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
-                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+
+                            Fragment temp_frag = main.getSupportFragmentManager().findFragmentByTag(Player.class.toString());
+                            main.selectedFragment = new Player();
+                            if(temp_frag == null)
+                            {
+                                transaction = main.getSupportFragmentManager().beginTransaction();
+                                main.getSupportFragmentManager().popBackStack(Player.class.toString(),FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                transaction.add(R.id.main_fragment, main.selectedFragment, Player.class.toString());
+                                transaction.addToBackStack(Player.class.toString());
+                                transaction.commit();
+                            }
+                            else
+                            {
+                                main.displayFragmentPlayer();
+                            }
+
+
                         }
                         else
                         {
                             App.current_track = item;
-                            ((Main) context).getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            ((Main)context).getSupportFragmentManager().popBackStack(Player.class.toString(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
                             transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-                            ((Main) context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                            ((Main)context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
                         }
                     }
                     else
@@ -94,10 +110,11 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
 
 
                         transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit, R.anim.nav_default_pop_enter_anim, R.anim.nav_default_pop_exit_anim);
-                        ((Main) context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
+                        ((Main)context).getSupportFragmentManager().beginTransaction().add(R.id.main_fragment, fr).addToBackStack(Player.class.toString()).commit();
 
                     }
                 }
+
 
 
                 App.firstStart = false;

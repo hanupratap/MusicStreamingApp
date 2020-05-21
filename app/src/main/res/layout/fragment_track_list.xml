@@ -9,6 +9,7 @@
     tools:context=".TrackList">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/app_bar_layout1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fitsSystemWindows="false"
@@ -55,12 +56,32 @@
     </com.google.android.material.appbar.AppBarLayout>
 
 
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/fab_note_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/fab_margin"
+        app:layout_anchor="@id/app_bar_layout1"
+        app:layout_anchorGravity="end"
+        android:backgroundTint="#E14545"
+        app:iconTint="@color/search_layover_bg"
+        android:textColor="@color/colorAccent"
+        android:theme="@style/MyMaterialTheme"
+        app:icon="@drawable/ic_person_black_24dp"
+        android:text="Log Out"
+
+        />
+
+
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/track_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="5dp"
 
+        app:backgroundTint="@color/colorAccent"
+        app:borderWidth="0dp"
         android:background="@drawable/list_item_bg"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">

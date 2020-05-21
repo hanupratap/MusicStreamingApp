@@ -2,6 +2,7 @@ package com.example.musicstreamer;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.PendingIntent;
@@ -49,6 +50,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -64,6 +66,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -101,6 +104,7 @@ public class Player extends Fragment {
     SparkButton sparkButton;
     Main main;
 
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
 
 
@@ -144,6 +148,18 @@ public class Player extends Fragment {
 
         sparkButton = view.findViewById(R.id.spark_button);
 
+        FirebaseFirestore.getInstance().collection("Users").document(user.getUid()).collection("Favourites").document(App.current_track.id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.getBoolean("isfav"))
+                {
+                    sparkButton.setChecked(true);
+                }
+                else {
+                    sparkButton.setChecked(false);
+                }
+            }
+        });
 
 
 
@@ -258,10 +274,12 @@ public class Player extends Fragment {
         return view;
     }
 
+
+
     void loadLyrics()
     {
 
-        final ArrayList<String> urls = new ArrayList<String>(); //to read each line
+        final List<String> urls = new ArrayList<String>(); //to read each line
         //TextView t; //to show the result, please declare and find it inside onCreate()
 
 

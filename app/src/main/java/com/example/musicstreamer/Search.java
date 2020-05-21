@@ -71,6 +71,7 @@ public class Search extends Fragment {
                     @Override
                     public void onRefresh() {
                         updateRecycler();
+
                     }
                 }
         );
@@ -104,6 +105,7 @@ public class Search extends Fragment {
                 Query query = notebookRef.orderBy("name").startAt(queryText)
                         .endAt(queryText + "\uf8ff");
                 func(query);
+
             }
 
             @Override
@@ -146,13 +148,17 @@ public class Search extends Fragment {
                                 SearchAdapter searchAdapter = new SearchAdapter(getActivity(), fav_list);
                                 favRecycler.setAdapter(searchAdapter);
 
+                                if(mySwipeRefreshLayout.isRefreshing())
+                                {
+                                    mySwipeRefreshLayout.setRefreshing(false);
+                                }
+
                             }
                         });
 
                     }
-
-
                 }
+
 
             }
         });

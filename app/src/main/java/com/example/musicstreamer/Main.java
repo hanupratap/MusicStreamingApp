@@ -81,7 +81,6 @@ public class Main extends AppCompatActivity  {
         transaction.add(R.id.main_fragment,new TrackList(), TrackList.class.toString());
         transaction.addToBackStack(TrackList.class.toString());
         transaction.commit();
-        Toast.makeText(this, "Double back to EXIT", Toast.LENGTH_SHORT).show();
 
 
 
@@ -229,7 +228,6 @@ public class Main extends AppCompatActivity  {
     }
 
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -240,6 +238,9 @@ public class Main extends AppCompatActivity  {
     public void onBackPressed()
     {
 
+
+
+
             String a = selectedFragment.getClass().toString();
             String b = Player.class.toString();
             if(a.equals(b))
@@ -249,8 +250,13 @@ public class Main extends AppCompatActivity  {
             }
             else
             {
-                minimizeApp();
-//                super.onBackPressed();
+                if(mBound==false)
+                {
+                    finishAffinity();
+                }
+                else {
+                    minimizeApp();
+                }
             }
 
 
@@ -258,6 +264,7 @@ public class Main extends AppCompatActivity  {
 
 
     }
+
 
 
     @Override
@@ -321,10 +328,12 @@ public class Main extends AppCompatActivity  {
         Fragment fragmentC = getSupportFragmentManager().findFragmentByTag(Search.class.toString());
         Fragment fragmentD = getSupportFragmentManager().findFragmentByTag(SearchResults.class.toString());
         if (fragmentA!=null && fragmentA.isAdded()) { // if the fragment is already in container
+            selectedFragment = fragmentA;
             ft.show(fragmentA);
         } else { // fragment needs to be added to frame container
             ft.add(R.id.main_fragment, new TrackList(), TrackList.class.toString());
             ft.addToBackStack(TrackList.class.toString());
+            selectedFragment = fragmentA;
         }
         // Hide fragment B
         if (fragmentB!=null && fragmentB.isAdded()) { ft.hide(fragmentB); }
@@ -355,7 +364,9 @@ public class Main extends AppCompatActivity  {
         Fragment fragmentD = getSupportFragmentManager().findFragmentByTag(SearchResults.class.toString());
         if (fragmentA!=null && fragmentA.isAdded()) { // if the fragment is already in container
             ft.show(fragmentA);
+            selectedFragment = fragmentA;
         } else { // fragment needs to be added to frame container
+            selectedFragment = fragmentA;
             ft.add(R.id.main_fragment, new Search(), Search.class.toString());
             ft.addToBackStack(Search.class.toString());
         }
@@ -380,9 +391,11 @@ public class Main extends AppCompatActivity  {
         Fragment fragmentD = getSupportFragmentManager().findFragmentByTag(SearchResults.class.toString());
         if (fragmentA!=null && fragmentA.isAdded()) { // if the fragment is already in container
             ft.show(fragmentA);
+            selectedFragment = fragmentA;
         } else { // fragment needs to be added to frame container
             ft.add(R.id.main_fragment, new Search(), Search.class.toString());
             ft.addToBackStack(Search.class.toString());
+            selectedFragment = fragmentA;
         }
         // Hide fragment B
         if (fragmentB!=null && fragmentB.isAdded()) { ft.hide(fragmentB); }
