@@ -1,59 +1,30 @@
 package com.example.musicstreamer;
-
-import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
-import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.telecom.Call;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Menu;
-import android.view.Window;
-import android.view.WindowManager;
+
 import android.widget.Toast;
 
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
+
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.ui.PlayerControlView;
-import com.google.android.exoplayer2.ui.PlayerNotificationManager;
-import com.google.android.exoplayer2.util.Util;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.navigation.NavigationView;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+
 
 import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
+
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentContainerView;
+
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import java.util.ArrayList;
-import java.util.List;
+import androidx.appcompat.app.AppCompatActivity;
 
 import io.paperdb.Paper;
 
@@ -63,9 +34,9 @@ public class Main extends AppCompatActivity  {
     BottomNavigationView bottomNavigationView;
     public PlayerService mService;
     public boolean mBound = false;
+
     private boolean playWhenReady = false;
     private int currentWindow = 0;
-
     private long playbackPosition = 0;
 
     FragmentTransaction transaction;
@@ -136,7 +107,7 @@ public class Main extends AppCompatActivity  {
         bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
 
 
-        if(App.firstStart == false)
+        if(!App.firstStart)
         {
             if(App.current_track.id == null)
             {
@@ -171,16 +142,18 @@ public class Main extends AppCompatActivity  {
                 switch (item.getItemId()) {
                     case R.id.explore:
 
-                        if (!selectedFragment.getClass().toString().equals(TrackList.class.toString())) {
-                            selectedFragment = new TrackList();
-                            getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+//                        if (!selectedFragment.getClass().toString().equals(TrackList.class.toString())) {
+//                            selectedFragment = new TrackList();
+//                            getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
+//                            transaction = getSupportFragmentManager().beginTransaction();
+//                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+//
+//                            transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
+//                            transaction.addToBackStack(TrackList.class.toString());
+//                            transaction.commit();
+//                        }
 
-                            transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
-                            transaction.addToBackStack(TrackList.class.toString());
-                            transaction.commit();
-                        }
+                        displayFragmentTrackList();
 
 
                         return true;
@@ -201,9 +174,9 @@ public class Main extends AppCompatActivity  {
                         }
                         else
                         {
-                            getSupportFragmentManager().popBackStack(Player.class.toString(), 0);
-
+                            displayFragmentPlayer();
                         }
+
 
                         return true;
 
@@ -211,17 +184,18 @@ public class Main extends AppCompatActivity  {
                     case R.id.search:
 
 
-                        if (!selectedFragment.getClass().toString().equals(Search.class.toString()))
-                        {
-                            selectedFragment = new Search();
-                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
-                            transaction = getSupportFragmentManager().beginTransaction();
-                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
-                            transaction.add(R.id.main_fragment, selectedFragment, Search.class.toString());
-                            transaction.addToBackStack(Search.class.toString());
-                            transaction.commit();
-                        }
+//                        if (!selectedFragment.getClass().toString().equals(Search.class.toString()))
+//                        {
+//                            selectedFragment = new Search();
+//                            getSupportFragmentManager().popBackStack(Player.class.toString(),0);
+//                            transaction = getSupportFragmentManager().beginTransaction();
+//                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+//                            transaction.add(R.id.main_fragment, selectedFragment, Search.class.toString());
+//                            transaction.addToBackStack(Search.class.toString());
+//                            transaction.commit();
+//                        }
 
+                        displayFragmentSearch();
 
 
 
@@ -352,6 +326,88 @@ public class Main extends AppCompatActivity  {
         }
     }
 
+
+    protected void displayFragmentTrackList() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        ft.hide(selectedFragment);
+        Fragment fragmentA = getSupportFragmentManager().findFragmentByTag(TrackList.class.toString());
+        Fragment fragmentB = getSupportFragmentManager().findFragmentByTag(Player.class.toString());
+        Fragment fragmentC = getSupportFragmentManager().findFragmentByTag(Search.class.toString());
+        Fragment fragmentD = getSupportFragmentManager().findFragmentByTag(SearchResults.class.toString());
+        if (fragmentA!=null && fragmentA.isAdded()) { // if the fragment is already in container
+            ft.show(fragmentA);
+        } else { // fragment needs to be added to frame container
+            ft.add(R.id.main_fragment, new TrackList(), TrackList.class.toString());
+            ft.addToBackStack(TrackList.class.toString());
+        }
+        // Hide fragment B
+        if (fragmentB!=null && fragmentB.isAdded()) { ft.hide(fragmentB); }
+        // Hide fragment C
+        if (fragmentC!=null && fragmentC.isAdded()) { ft.hide(fragmentC); }
+
+        //Hide fragment D
+        if(fragmentD!=null)
+        {
+            if (fragmentD.isAdded()) { ft.hide(fragmentD); }
+        }
+        //Hide Fragment D
+        if (fragmentD!=null && fragmentD.isAdded()) { ft.hide(fragmentD); }
+
+
+        // Commit changes
+        ft.commit();
+    }
+
+    protected void displayFragmentPlayer() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.hide(selectedFragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+        Fragment fragmentA = getSupportFragmentManager().findFragmentByTag(Player.class.toString());
+        Fragment fragmentB = getSupportFragmentManager().findFragmentByTag(Search.class.toString());
+        Fragment fragmentC = getSupportFragmentManager().findFragmentByTag(TrackList.class.toString());
+        Fragment fragmentD = getSupportFragmentManager().findFragmentByTag(SearchResults.class.toString());
+        if (fragmentA!=null && fragmentA.isAdded()) { // if the fragment is already in container
+            ft.show(fragmentA);
+        } else { // fragment needs to be added to frame container
+            ft.add(R.id.main_fragment, new Search(), Search.class.toString());
+            ft.addToBackStack(Search.class.toString());
+        }
+        // Hide fragment B
+        if (fragmentB!=null && fragmentB.isAdded()) { ft.hide(fragmentB); }
+        // Hide fragment C
+        if (fragmentC!=null && fragmentC.isAdded()) { ft.hide(fragmentC); }
+        //Hide Fragment D
+        if (fragmentD!=null && fragmentD.isAdded()) { ft.hide(fragmentD); }
+        // Commit changes
+        ft.commit();
+    }
+
+    protected void displayFragmentSearch() {
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        ft.hide(selectedFragment);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+        Fragment fragmentA = getSupportFragmentManager().findFragmentByTag(Search.class.toString());
+        Fragment fragmentB = getSupportFragmentManager().findFragmentByTag(Player.class.toString());
+        Fragment fragmentC = getSupportFragmentManager().findFragmentByTag(TrackList.class.toString());
+        Fragment fragmentD = getSupportFragmentManager().findFragmentByTag(SearchResults.class.toString());
+        if (fragmentA!=null && fragmentA.isAdded()) { // if the fragment is already in container
+            ft.show(fragmentA);
+        } else { // fragment needs to be added to frame container
+            ft.add(R.id.main_fragment, new Search(), Search.class.toString());
+            ft.addToBackStack(Search.class.toString());
+        }
+        // Hide fragment B
+        if (fragmentB!=null && fragmentB.isAdded()) { ft.hide(fragmentB); }
+        // Hide fragment C
+        if (fragmentC!=null && fragmentC.isAdded()) { ft.hide(fragmentC); }
+        //Hide Fragment D
+        if (fragmentD!=null && fragmentD.isAdded()) { ft.hide(fragmentD); }
+        // Commit changes
+        ft.commit();
+    }
 
 }
 
