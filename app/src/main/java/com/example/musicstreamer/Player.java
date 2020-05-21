@@ -48,9 +48,13 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+import com.varunest.sparkbutton.SparkButton;
+import com.varunest.sparkbutton.SparkEventListener;
 
 import org.w3c.dom.Text;
 
@@ -59,6 +63,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import io.paperdb.Paper;
@@ -85,11 +91,14 @@ public class Player extends Fragment {
     ImageView imageView;
     CollapsingToolbarLayout collapsingToolbarLayout;
 
+    FirebaseAuth mAuth = FirebaseAuth.getInstance();
+
 
     private Intent intent;
 
     private static Track prev_track;
 
+    SparkButton sparkButton;
     Main main;
 
 
@@ -133,11 +142,55 @@ public class Player extends Fragment {
 
         Paper.init(getActivity());
 
+        sparkButton = view.findViewById(R.id.spark_button);
 
 
 
 
+        if(mAuth.getCurrentUser().isAnonymous())
+        {
+            sparkButton.setVisibility(View.GONE);
+        }
+        else {
+            sparkButton.setVisibility(View.VISIBLE);
 
+        }
+
+
+        sparkButton.setEventListener(new SparkEventListener(){
+
+            @Override
+            public void onEvent(ImageView button, boolean buttonState) {
+                if(buttonState)
+                {
+                    Toast.makeText(main, "Added to favourites", Toast.LENGTH_SHORT).show();
+                    Map map = new HashMap<>();
+                    map.put("isfav",true);
+                    map.put("path", App.current_track.path);
+                    db.collection("Users").document(mAuth.getCurrentUser().getUid()).collection("Favourites").document(App.current_track.id).set(map, SetOptions.merge());
+                }
+                else
+                {
+                    Toast.makeText(main, "Removed to favourites", Toast.LENGTH_SHORT).show();
+                    Map map = new HashMap<>();
+                    map.put("isfav",false);
+                    map.put("path", App.current_track.path);
+                    db.collection("Users").document(mAuth.getCurrentUser().getUid()).collection("Favourites").document(App.current_track.id).set(map, SetOptions.merge());
+
+
+                }
+            }
+
+            @Override
+            public void onEventAnimationEnd(ImageView button, boolean buttonState) {
+
+            }
+
+            @Override
+            public void onEventAnimationStart(ImageView button, boolean buttonState) {
+
+            }
+        });
         imageView = view.findViewById(R.id.album_img);
         img = view.findViewById(R.id.image_main);
 
@@ -160,6 +213,7 @@ public class Player extends Fragment {
 //                (getActivity()).onBackPressed();
 //            }
 //        });
+
 
 
 

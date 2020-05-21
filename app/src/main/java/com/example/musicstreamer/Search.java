@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,8 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -48,7 +51,11 @@ public class Search extends Fragment {
     List<Track> list = new ArrayList<>();
     CollectionReference notebookRef = FirebaseFirestore.getInstance().collection("Tracks");
     Query query1;
-    RecyclerView rv2;
+    DocumentSnapshot documentSnapshot_temp;
+    List<Track> fav_list = new ArrayList<>();
+    RecyclerView rv2, favRecycler;
+    private SwipeRefreshLayout mySwipeRefreshLayout;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,6 +64,16 @@ public class Search extends Fragment {
 
         searchView = view.findViewById(R.id.search_track);
 
+        mySwipeRefreshLayout = view.findViewById(R.id.swipe_refresh);
+
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        updateRecycler();
+                    }
+                }
+        );
 
 
 
@@ -64,6 +81,12 @@ public class Search extends Fragment {
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        favRecycler = view.findViewById(R.id.my_fav_list);
+        favRecycler.setLayoutManager(new LinearLayoutManager(getActivity()));
+        favRecycler.setHasFixedSize(true);
+        favRecycler.setAdapter(null);
+
+        updateRecycler();
 
 
 
@@ -92,6 +115,48 @@ public class Search extends Fragment {
         return view;
     }
 
+    private void updateRecycler() {
+
+        fav_list.clear();
+
+        FirebaseFirestore.getInstance().collection("Users").document(FirebaseAuth.getInstance().getCurrentUser().getUid()).collection("Favourites").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+
+                for(DocumentSnapshot documentSnapshot:queryDocumentSnapshots)
+                {
+                    if(documentSnapshot.getBoolean("isfav")==true)
+                    {
+                        FirebaseFirestore.getInstance().document(documentSnapshot.getString("path")).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                            @Override
+                            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                                Track item = new Track();
+
+                                item.name = documentSnapshot.getString("name");
+                                item.artist = documentSnapshot.getString("artist");
+                                item.artist_art = documentSnapshot.getString("artist_art");
+                                item.album_art = documentSnapshot.getString("album_art");
+                                item.url = documentSnapshot.getString("url");
+                                item.lyrics = documentSnapshot.getString("lyrics");
+                                item.id = documentSnapshot.getId();
+                                item.path = documentSnapshot.getReference().getPath();
+                                list.add(item);
+                                fav_list.add(item);
+
+                                SearchAdapter searchAdapter = new SearchAdapter(getActivity(), fav_list);
+                                favRecycler.setAdapter(searchAdapter);
+
+                            }
+                        });
+
+                    }
+
+
+                }
+
+            }
+        });
+    }
 
 
     private void func(Query query) {
@@ -113,6 +178,7 @@ public class Search extends Fragment {
                     item.url = documentSnapshot.getString("url");
                     item.lyrics = documentSnapshot.getString("lyrics");
                     item.id = documentSnapshot.getId();
+                    item.path = documentSnapshot.getReference().getPath();
                     list.add(item);
 
                 }
@@ -141,13 +207,16 @@ public class Search extends Fragment {
                         func(query);
                     }
                 }
-
-
-
             }
         });
 
 
+
+    }
+
+
+    protected void setUpRecyclerView()
+    {
 
     }
 

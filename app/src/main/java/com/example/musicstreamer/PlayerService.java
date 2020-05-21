@@ -222,8 +222,6 @@ public class PlayerService extends Service {
                 }
         );
 
-        playerNotificationManager.setUseStopAction(true);
-
 
 
         playerNotificationManager.setPlayer(player);

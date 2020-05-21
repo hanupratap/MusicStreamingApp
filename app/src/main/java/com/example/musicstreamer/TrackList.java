@@ -1,6 +1,7 @@
 package com.example.musicstreamer;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
@@ -65,6 +67,9 @@ public class TrackList extends Fragment {
         rv = view.findViewById(R.id.track_list);
         img = view.findViewById(R.id.image_cover_app);
         main = (Main) getActivity();
+
+
+
 
 
         if(main!=null)
@@ -120,6 +125,7 @@ public class TrackList extends Fragment {
                 item.url = documentSnapshot.getString("url");
                 item.lyrics = documentSnapshot.getString("lyrics");
                 item.id = documentSnapshot.getId();
+                item.path = documentSnapshot.getReference().getPath();
 
                 Fragment fr = new Player();
                 main.selectedFragment = fr;
@@ -140,8 +146,23 @@ public class TrackList extends Fragment {
                     {
                         if(App.current_track.id.equals(item.id))
                         {
-                            getParentFragmentManager().popBackStack(Player.class.toString(), 0);
-                            transaction.setCustomAnimations(R.anim.fragment_open_enter, R.anim.fragment_close_exit);
+
+                            Fragment temp_frag = main.getSupportFragmentManager().findFragmentByTag(Player.class.toString());
+                            main.selectedFragment = new Player();
+                            if(temp_frag == null)
+                            {
+                                transaction = main.getSupportFragmentManager().beginTransaction();
+                                main.getSupportFragmentManager().popBackStack(Player.class.toString(),FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                transaction.add(R.id.main_fragment, main.selectedFragment, Player.class.toString());
+                                transaction.addToBackStack(Player.class.toString());
+                                transaction.commit();
+                            }
+                            else
+                            {
+                                main.displayFragmentPlayer();
+                            }
+
+
                         }
                         else
                         {

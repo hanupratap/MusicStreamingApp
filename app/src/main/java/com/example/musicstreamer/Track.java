@@ -16,6 +16,7 @@ public class Track implements Serializable {
     public String lyrics;
     public String album_art;
     public String id;
+    public String path;
 
 
 

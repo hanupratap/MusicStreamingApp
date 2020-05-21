@@ -1,5 +1,6 @@
 package com.example.musicstreamer;
 import android.content.ComponentName;
+import android.content.Intent;
 import android.content.ServiceConnection;
 
 import android.os.Bundle;
@@ -211,6 +212,13 @@ public class Main extends AppCompatActivity  {
 
 
 
+    public void minimizeApp() {
+        Intent startMain = new Intent(Intent.ACTION_MAIN);
+        startMain.addCategory(Intent.CATEGORY_HOME);
+        startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(startMain);
+    }
+
 
     void initializePlayer() {
 
@@ -232,44 +240,21 @@ public class Main extends AppCompatActivity  {
     public void onBackPressed()
     {
 
-            int fragmentCount = getSupportFragmentManager().getBackStackEntryCount();
-            if (fragmentCount == 1) {
-                finishAffinity();
-            }
             String a = selectedFragment.getClass().toString();
             String b = Player.class.toString();
             if(a.equals(b))
             {
-                FragmentTransaction transaction;
-                selectedFragment = new TrackList();
-                transaction = getSupportFragmentManager().beginTransaction();
-                getSupportFragmentManager().popBackStack(Player.class.toString(),0);
-                transaction.add(R.id.main_fragment, selectedFragment, TrackList.class.toString());
-                transaction.addToBackStack(TrackList.class.toString());
-                transaction.commit();
-
+                displayFragmentTrackList();
                 bottomNavigationView.getMenu().findItem(R.id.explore).setChecked(true);
             }
             else
             {
-                super.onBackPressed();
+                minimizeApp();
+//                super.onBackPressed();
             }
 
-            if(doubleBackToExitPressedOnce)
-            {
-                finishAffinity();
-            }
-
-        this.doubleBackToExitPressedOnce = true;
 
 
-        new Handler().postDelayed(new Runnable() {
-
-            @Override
-            public void run() {
-                doubleBackToExitPressedOnce=false;
-            }
-        }, 2000);
 
 
     }
