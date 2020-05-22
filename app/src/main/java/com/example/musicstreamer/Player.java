@@ -148,18 +148,28 @@ public class Player extends Fragment {
 
         sparkButton = view.findViewById(R.id.spark_button);
 
-        FirebaseFirestore.getInstance().collection("Users").document(user.getUid()).collection("Favourites").document(App.current_track.id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.getBoolean("isfav"))
-                {
-                    sparkButton.setChecked(true);
+
+
+        if(!user.isAnonymous())
+        {
+            FirebaseFirestore.getInstance().collection("Users").document(user.getUid()).collection("Favourites").document(App.current_track.id).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if(documentSnapshot.exists())
+                    {
+                        if(documentSnapshot.getBoolean("isfav"))
+                        {
+                            sparkButton.setChecked(true);
+                        }
+                        else {
+                            sparkButton.setChecked(false);
+                        }
+                    }
+
                 }
-                else {
-                    sparkButton.setChecked(false);
-                }
-            }
-        });
+            });
+        }
+
 
 
 

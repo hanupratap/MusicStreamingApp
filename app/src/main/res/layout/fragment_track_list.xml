@@ -68,7 +68,7 @@
         android:textColor="@color/colorAccent"
         android:theme="@style/MyMaterialTheme"
         app:icon="@drawable/ic_person_black_24dp"
-        android:text="Log Out"
+        android:text="Profile"
 
         />
 

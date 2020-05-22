@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -39,6 +40,8 @@ public class Dispatcher extends Activity {
     FirebaseAuth mAuth;
     private GoogleSignInClient mGoogleSignInClient;
 
+    TextView tv,tv1;
+
     LottieAnimationView animationView;
 
     @Override
@@ -52,6 +55,8 @@ public class Dispatcher extends Activity {
         animationView = findViewById(R.id.animationView);
         animationView.setVisibility(View.GONE);
         signInButton = findViewById(R.id.GsignIn);
+        tv = findViewById(R.id.textView2);
+        tv1 = findViewById(R.id.textView3);
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -115,6 +120,9 @@ public class Dispatcher extends Activity {
         signInButton.setVisibility(View.GONE);
         AnonymSignIn.setVisibility(View.GONE);
         animationView.setVisibility(View.VISIBLE);
+        tv.setVisibility(View.GONE);
+        tv1.setVisibility(View.GONE);
+
 
         new Handler().postDelayed(new Runnable() {
             @Override

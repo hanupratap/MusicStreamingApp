@@ -34,8 +34,10 @@ import android.view.ViewGroup;
 
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
 
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.SearchView;
 import android.widget.TextView;
@@ -52,6 +54,8 @@ import com.firebase.ui.firestore.paging.FirestorePagingOptions;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import com.google.android.material.badge.BadgeUtils;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
@@ -70,6 +74,7 @@ import java.util.List;
 import java.util.Random;
 
 import javax.microedition.khronos.opengles.GL;
+import javax.xml.namespace.QName;
 
 
 public class TrackList extends Fragment {
@@ -88,15 +93,73 @@ public class TrackList extends Fragment {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference notebookRef = db.collection("Tracks");
 
-    FirebaseUser user;
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
 
     ExtendedFloatingActionButton floatingActionButton;
+
+    BottomSheetDialog bottomSheetDialog;
+    Button btn;
+    TextView tv;
+    ImageView modal_img;
+
+
+    private void initializeBottomSheet()
+    {
+
+        bottomSheetDialog = new BottomSheetDialog(getActivity());
+        bottomSheetDialog.setContentView(R.layout.bottom_sheet_layout);
+        bottomSheetDialog.setCanceledOnTouchOutside(true);
+
+
+        btn = bottomSheetDialog.findViewById(R.id.logout);
+        tv = bottomSheetDialog.findViewById(R.id.userName);
+        modal_img = bottomSheetDialog.findViewById(R.id.user_image_modal);
+        if(!user.isAnonymous())
+        {
+            tv.setText(user.getDisplayName());
+            Glide.with(getActivity()).load(user.getPhotoUrl()).circleCrop().into(modal_img);
+        }
+
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLogoutAlertDialog();
+            }
+        });
+    }
+
+
+    public void showLogoutAlertDialog()
+    {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Log Out")
+                .setMessage("Do you want to log out of MetalStreamer")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        signOut();
+                    }
+                }).show();
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        initializeBottomSheet();
+
     }
+
+
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -110,7 +173,6 @@ public class TrackList extends Fragment {
 
         main = (Main) getActivity();
 
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
 //        if(!user.isAnonymous())
 //        {
@@ -136,8 +198,7 @@ public class TrackList extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(main, "Signing Out", Toast.LENGTH_SHORT).show();
-               signOut();
+                bottomSheetDialog.show();
             }
         });
 
@@ -308,4 +369,5 @@ public class TrackList extends Fragment {
 
         super.onResume();
     }
+
 }
