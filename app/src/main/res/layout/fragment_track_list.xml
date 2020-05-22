@@ -67,8 +67,8 @@
         app:iconTint="@color/search_layover_bg"
         android:textColor="@color/colorAccent"
         android:theme="@style/MyMaterialTheme"
-        app:icon="@drawable/ic_person_black_24dp"
-        android:text="Profile"
+        app:icon="@drawable/ic_arrow_back_black_24dp"
+        android:text="Log Out"
 
         />
 

@@ -105,6 +105,7 @@ public class TrackList extends Fragment {
     ImageView modal_img;
 
 
+/*
     private void initializeBottomSheet()
     {
 
@@ -129,7 +130,7 @@ public class TrackList extends Fragment {
             }
         });
     }
-
+*/
 
     public void showLogoutAlertDialog()
     {
@@ -145,16 +146,17 @@ public class TrackList extends Fragment {
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        signOut();
+                        main.signOut();
                     }
                 }).show();
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-        initializeBottomSheet();
+//        initializeBottomSheet();
 
     }
 
@@ -198,7 +200,7 @@ public class TrackList extends Fragment {
         floatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                bottomSheetDialog.show();
+                showLogoutAlertDialog();
             }
         });
 
@@ -223,21 +225,9 @@ public class TrackList extends Fragment {
         return view;
     }
 
-    public void signOut()
-    {
-        FirebaseAuth.getInstance().signOut();
-        restartApp();
-    }
 
 
 
-    private void restartApp() {
-
-        Intent intent = new Intent(getActivity(), Dispatcher.class);
-        intent .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-    }
 
 
     private void setUpRecyclerView()

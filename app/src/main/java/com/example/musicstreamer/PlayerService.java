@@ -63,7 +63,14 @@ public class PlayerService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Paper.init(context);
 
-        player = App.player;
+        if(App.player!=null)
+        {
+            player = App.player;
+        }
+        else {
+            App.player = new SimpleExoPlayer.Builder(this).build();;
+        }
+
 
         playerNotificationManager = App.playerNotificationManager;
 
@@ -123,7 +130,7 @@ public class PlayerService extends Service {
     public void onCreate() {
         super.onCreate();
         context = this;
-        player = new SimpleExoPlayer.Builder(this).build();
+
     }
 
 

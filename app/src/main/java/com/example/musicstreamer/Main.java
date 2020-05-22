@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 import androidx.annotation.NonNull;
@@ -305,6 +306,24 @@ public class Main extends AppCompatActivity  {
 //            releasePlayer();
 
     }
+
+    public void signOut()
+    {
+        FirebaseAuth.getInstance().signOut();
+        restartApp();
+    }
+
+
+    private void restartApp() {
+
+        finish();
+        Intent intent = new Intent(this, Dispatcher.class);
+        intent .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+    }
+
+
     protected void releasePlayer() {
 
 
