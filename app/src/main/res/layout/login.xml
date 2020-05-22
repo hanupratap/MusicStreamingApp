@@ -18,14 +18,15 @@
         android:layout_height="wrap_content"
         android:backgroundTint="#0012324A"
         android:elevation="0dp"
-
+        android:layout_margin="10dp"
+        android:id="@+id/card_above"
         >
         <LinearLayout
             android:background="@drawable/list_item_bg"
             android:backgroundTint="#A732041C"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
+
             android:orientation="vertical"
             >
             <TextView
@@ -59,6 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:elevation="0dp"
+        android:layout_margin="10dp"
+        android:id="@+id/card_below"
         android:backgroundTint="#004A1C12"
         >
         <LinearLayout
@@ -67,8 +70,9 @@
             android:orientation="vertical"
             android:backgroundTint="#A7042D32"
             android:background="@drawable/list_item_bg"
-            android:layout_margin="10dp"
+
             android:padding="10dp"
+
 
             >
             <TextView

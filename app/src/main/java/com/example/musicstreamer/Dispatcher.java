@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.danikula.videocache.HttpProxyCacheServer;
@@ -41,6 +42,7 @@ public class Dispatcher extends Activity {
     private GoogleSignInClient mGoogleSignInClient;
 
     TextView tv,tv1;
+    CardView cardView1, cardView2;
 
     LottieAnimationView animationView;
 
@@ -57,6 +59,10 @@ public class Dispatcher extends Activity {
         signInButton = findViewById(R.id.GsignIn);
         tv = findViewById(R.id.textView2);
         tv1 = findViewById(R.id.textView3);
+        cardView1 = findViewById(R.id.card_below);
+        cardView2 = findViewById(R.id.card_below);
+
+
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
@@ -123,6 +129,8 @@ public class Dispatcher extends Activity {
         tv.setVisibility(View.GONE);
         tv1.setVisibility(View.GONE);
 
+        cardView1.setVisibility(View.GONE);
+        cardView2.setVisibility(View.GONE);
 
         new Handler().postDelayed(new Runnable() {
             @Override
