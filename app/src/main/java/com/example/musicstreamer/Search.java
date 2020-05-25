@@ -87,7 +87,16 @@ public class Search extends Fragment {
         favRecycler.setHasFixedSize(true);
         favRecycler.setAdapter(null);
 
-        updateRecycler();
+        if(FirebaseAuth.getInstance().getCurrentUser().isAnonymous())
+        {
+            favRecycler.setVisibility(View.GONE);
+            Toast.makeText(getActivity(), "Sign in from google to get Playlist Support", Toast.LENGTH_LONG).show();
+        }
+        else
+        {
+            updateRecycler();
+        }
+
 
 
 

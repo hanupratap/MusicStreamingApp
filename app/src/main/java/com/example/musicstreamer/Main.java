@@ -41,6 +41,8 @@ public class Main extends AppCompatActivity  {
     private int currentWindow = 0;
     private long playbackPosition = 0;
 
+    private boolean closeLogic = false;
+
     FragmentTransaction transaction;
     Fragment selectedFragment = null;
 
@@ -72,10 +74,6 @@ public class Main extends AppCompatActivity  {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
-
-
-
-
         fragmentManager = getSupportFragmentManager();
         transaction = fragmentManager.beginTransaction();
 
@@ -104,6 +102,29 @@ public class Main extends AppCompatActivity  {
         });
 
         App.player = new SimpleExoPlayer.Builder(this).setTrackSelector(new DefaultTrackSelector(this)).build();
+
+
+        App.player.addListener(new com.google.android.exoplayer2.Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                if (playWhenReady && playbackState == com.google.android.exoplayer2.Player.STATE_READY) {
+//                    Toast.makeText(Main.this, "Playing", Toast.LENGTH_SHORT).show();
+                    // media actually playing
+                    closeLogic = false;
+                } else if (playWhenReady) {
+                    // might be idle (plays after prepare()),
+                    // buffering (plays when data available)
+                    // or ended (plays when seek away from end)
+//                    Toast.makeText(Main.this, "Paused", Toast.LENGTH_SHORT).show();
+                    closeLogic = true;
+
+                } else {
+                    // player paused in any state
+                    closeLogic = true;
+                }
+            }
+        });
+
 
         bottomNavigationView.getMenu().findItem(R.id.play).setEnabled(false);
 
@@ -234,7 +255,6 @@ public class Main extends AppCompatActivity  {
         super.onStart();
     }
 
-    boolean doubleBackToExitPressedOnce = false;
     @Override
     public void onBackPressed()
     {
@@ -256,7 +276,16 @@ public class Main extends AppCompatActivity  {
                     finishAffinity();
                 }
                 else {
-                    minimizeApp();
+                    if(closeLogic)
+                    {
+                        releasePlayer();
+                        finish();
+                    }
+                    else
+                    {
+                        minimizeApp();
+                    }
+
                 }
             }
 
@@ -371,6 +400,8 @@ public class Main extends AppCompatActivity  {
         // Commit changes
         ft.commit();
     }
+
+
 
     protected void displayFragmentPlayer() {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
